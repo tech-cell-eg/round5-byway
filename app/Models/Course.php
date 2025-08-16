@@ -16,7 +16,7 @@ class Course extends Model
         'status',
         'price',
         'category_id',
-        'user_id'
+        'user_id',
     ];
 
     protected $casts = [
@@ -50,5 +50,10 @@ class Course extends Model
     public function carts()
     {
         return $this->hasMany(Cart::class);
+    }
+
+    public function instructor()
+    {
+        return $this->belongsTo(User::class, 'instructor_id');
     }
 }
