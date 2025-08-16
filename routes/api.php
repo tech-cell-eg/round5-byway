@@ -18,6 +18,9 @@ use App\Http\Controllers\Api\PaymentMethodController;
 use App\Http\Controllers\Api\UserManagementController;
 use App\Http\Controllers\Api\CourseManagementController;
 use App\Http\Controllers\Api\ReviewManagementController;
+use App\Http\Controllers\Api\LearnerCourseController;
+use App\Http\Controllers\Api\Learner\CourseInteractionController;
+use App\Http\Controllers\Api\CourseShowController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -95,3 +98,26 @@ Route::middleware('auth:sanctum')->controller(CartController::class)->group(func
     Route::delete('/cart/{course}','remove');
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/learner/courses', [LearnerCourseController::class, 'index']);
+});
+
+Route::middleware('auth:sanctum')->prefix('profile')->group(function () {
+    Route::post('/close-account', [ProfileController::class, 'closeAccount']);
+    Route::get('/status', [ProfileController::class, 'status']);
+});
+
+Route::middleware('auth:sanctum')->prefix('learner')->group(function () {
+    // Favorites
+    Route::post('/favorites/add', [CourseInteractionController::class, 'addToFavorites']);
+    Route::post('/favorites/remove', [CourseInteractionController::class, 'removeFromFavorites']);
+    Route::get('/favorites', [CourseInteractionController::class, 'getFavorites']);
+
+    // Cart
+    Route::post('/cart/add', [CourseInteractionController::class, 'addToCart']);
+    Route::post('/cart/remove', [CourseInteractionController::class, 'removeFromCart']);
+    Route::get('/cart', [CourseInteractionController::class, 'getCart']);
+});
+
+// Public route – no login required
+Route::get('/courses/{id}', [CourseShowController::class, 'show']);
